@@ -1,18 +1,59 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: '/'
+});
+
+interface Exercise {
+  id: number;
+  name: string;
+}
+
+interface Workout {
+  id: number;
+  name: string;
+  workoutPlanId: number;
+  exerciseIds: number[];
+}
 
 function Workout() {
   const navigate = useNavigate();
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
-  // Sample data for the table
-  const workouts = [
-    { id: 1, name: "Workout 1", exercises: "Exercise 1, Exercise 5, Exercise 6" },
-    { id: 2, name: "Workout 2", exercises: "Exercise 2" },
-    { id: 3, name: "Workout 3", exercises: "Exercise 3" },
-  ];
+  useEffect(() => {
+    fetchAllWorkouts();
+    fetchAllExercises();
+  }, []);
 
-  const handleEdit = (id:number) => {
+  const fetchAllWorkouts = () => {
+    api.get<Workout[]>("/workouts").then((response) => {
+      setWorkouts(response.data);
+    });
+  };
+
+  const fetchAllExercises = () => {
+    api.get<Exercise[]>("/exercises").then((response) => {
+      setExercises(response.data);
+    });
+  };
+
+  const getExercisesByIds = (exerciseIds: number[]): string => {
+    const exerciseNames = exerciseIds.map((id) => {
+      const exercise = exercises.find((ex) => ex.id === id);
+      return exercise ? exercise.name : '';
+    });
+    return exerciseNames.join(', ');
+  };
+
+  const handleEdit = (id: number) => {
     navigate(`/workout/${id}`);
+  };
+
+  const handleDetails = (id: number) => {
+    navigate(`/workout/${id}/details`);
   };
 
   return (
@@ -30,8 +71,9 @@ function Workout() {
           {workouts.map((workout) => (
             <tr key={workout.id}>
               <td>{workout.name}</td>
-              <td>{workout.exercises}</td>
+              <td>{getExercisesByIds(workout.exerciseIds)}</td>
               <td>
+                <button onClick={() => handleDetails(workout.id)}>Details</button>
                 <button onClick={() => handleEdit(workout.id)}>Edit</button>
                 <button>Delete</button>
               </td>

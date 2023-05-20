@@ -1,108 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: '/'
+});
+
+interface Exercise {
+  id: number;
+  name: string;
+  maxWeight: number;
+}
 
 function Exercise() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
-  // Sample data for exercises
-  const [exercises, setExercises] = useState([
-    { id: 1, name: "Exercise 1", maxWeight: 100 },
-    { id: 2, name: "Exercise 2", maxWeight: 150 },
-    { id: 3, name: "Exercise 3", maxWeight: 120 },
-  ]);
+  useEffect(() => {
+    api.get<Exercise[]>('/exercises').then((response) => {
+      setExercises(response.data);
+    });
+  }, []);
 
-  const [selectedExercise, setSelectedExercise] = useState<null | { id: number; name: string; maxWeight: number }>(null);
-
-  // Handle deleting an exercise
   const handleDelete = (exerciseId: number) => {
     // Implement delete logic here
   };
 
-  // Handle editing an exercise
   const handleEdit = (exerciseId: number) => {
-    const exercise = exercises.find((exercise) => exercise.id === exerciseId);
-    setSelectedExercise(exercise || null);
+    // Implement edit logic here
   };
 
-  // Handle form submission for exercise editing
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     // Implement form submission logic here
   };
 
-  // Handle form input change
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Implement form input change logic here
   };
 
-  // Handle closing the modal
   const handleCloseModal = () => {
-    setSelectedExercise(null);
+    // Implement close modal logic here
   };
 
   return (
     <div>
       <h1>Exercise</h1>
       <div className='table-container'>
-      <table>
-        <thead>
-          <tr>
-            <th>Exercise Name</th>
-            <th>Max Weight</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {exercises.map((exercise) => (
-            <tr key={exercise.id}>
-              <td>{exercise.name}</td>
-              <td>{exercise.maxWeight}</td>
-              <td>
-                <button onClick={() => handleEdit(exercise.id)}>Edit</button>
-                <button onClick={() => handleDelete(exercise.id)}>Delete</button>
-              </td>
+        <table>
+          <thead>
+            <tr>
+              <th>Exercise Name</th>
+              <th>Max Weight</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {exercises.map((exercise) => (
+              <tr key={exercise.id}>
+                <td>{exercise.name}</td>
+                <td>{exercise.maxWeight}</td>
+                <td>
+                  <button onClick={() => handleEdit(exercise.id)}>Edit</button>
+                  <button onClick={() => handleDelete(exercise.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Modal for editing exercise */}
-      {selectedExercise && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-content">
-              <h3>Edit Exercise</h3>
-              <form onSubmit={handleSubmit}>
-                <label>
-                  Exercise Name:
-                  <input
-                    type="text"
-                    name="name"
-                    value={selectedExercise.name}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label>
-                  Max Weight:
-                  <input
-                    type="number"
-                    name="maxWeight"
-                    value={selectedExercise.maxWeight}
-                    onChange={handleChange}
-                  />
-                </label>
-                <div>
-                  <button type="submit">Save</button>
-                  <button onClick={handleCloseModal}>Cancel</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Rest of the code... */}
     </div>
   );
