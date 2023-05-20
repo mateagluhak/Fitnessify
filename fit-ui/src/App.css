@@ -108,3 +108,33 @@
 .sidebar .expand-button::before {
   margin-right: 5px;
 }
+
+.workout-container {
+  margin: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+button {
+  padding: 5px 10px;
+  margin-right: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
