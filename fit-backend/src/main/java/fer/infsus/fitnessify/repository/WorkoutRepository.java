@@ -34,11 +34,42 @@ public class WorkoutRepository {
 
     public Workout createWorkout(WorkoutDto workoutDto) {
         try {
-            return dslContext.insertInto(WORKOUT)
+            Workout workout = dslContext.insertInto(WORKOUT)
                     .columns(WORKOUT.NAME, WORKOUT.WORKOUT_PLAN_ID)
                     .values(workoutDto.name(), workoutDto.workoutPlanId())
                     .returning()
                     .fetchSingleInto(Workout.class);
+            for (Integer exerciseId : workout.getExerciseIds()) {
+                dslContext.insertInto(WORKOUTEXERCISE)
+                        .columns(WORKOUTEXERCISE.WORKOUT_ID, WORKOUTEXERCISE.EXERCISE_ID)
+                        .values(workout.getId(), exerciseId)
+                        .execute();
+            }
+            workout.setExerciseIds(workoutDto.exerciseIds());
+            return workout;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Workout editWorkout(Integer workoutId, WorkoutDto workoutDto) {
+        try {
+            Workout workout = dslContext.update(WORKOUT)
+                    .set(WORKOUT.NAME, workoutDto.name())
+                    .set(WORKOUT.WORKOUT_PLAN_ID, workoutDto.workoutPlanId())
+                    .where(WORKOUT.ID.eq(workoutId))
+                    .returning()
+                    .fetchSingleInto(Workout.class);
+            dslContext.deleteFrom(WORKOUTEXERCISE).where(WORKOUTEXERCISE.WORKOUT_ID.eq(workoutId)).execute();
+            for (Integer exerciseId : workoutDto.exerciseIds()) {
+                dslContext.insertInto(WORKOUTEXERCISE)
+                        .columns(WORKOUTEXERCISE.WORKOUT_ID, WORKOUTEXERCISE.EXERCISE_ID)
+                        .values(workoutId, exerciseId)
+                        .execute();
+            }
+            workout.setExerciseIds(workoutDto.exerciseIds());
+            return workout;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
