@@ -75,3 +75,36 @@
   border-top: 1px solid #ddd;
   padding-top: 10px;
 }
+
+.sidebar .sub-nav {
+  list-style-type: none;
+  margin-top: 5px;
+  padding-left: 20px;
+}
+
+.sidebar .sub-nav li {
+  margin-bottom: 5px;
+}
+
+.sidebar .sub-nav li a {
+  text-decoration: none;
+  color: #333;
+}
+
+.sidebar .expand-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 5px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+}
+
+.sidebar .expand-button:focus {
+  outline: none;
+}
+
+.sidebar .expand-button::before {
+  margin-right: 5px;
+}

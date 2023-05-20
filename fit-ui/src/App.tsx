@@ -4,6 +4,7 @@ import './App.css';
 import Sidebar from './Sidebar';
 import Home from './pages/Home';
 import Workout from './pages/Workout';
+import Exercise from './pages/Exercise';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home/>} />
             <Route path="/workout" element={<Workout/>} />
+            <Route path="/exercise" element={<Exercise/>} />
           </Routes>
         </div>
       </div>
