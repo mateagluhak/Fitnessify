@@ -17,7 +17,13 @@ public class WorkoutRepository {
     private DSLContext dslContext;
 
     public Workout getWorkoutById(Integer id) {
-        return dslContext.selectFrom(WORKOUT).where(WORKOUT.ID.eq(id)).fetchSingle().into(Workout.class);
+        Workout workout = dslContext.selectFrom(WORKOUT).where(WORKOUT.ID.eq(id)).fetchSingle().into(Workout.class);
+        workout.setExerciseIds(dslContext.select(WORKOUTEXERCISE.EXERCISE_ID)
+                .from(WORKOUTEXERCISE)
+                .where(WORKOUTEXERCISE.WORKOUT_ID.eq(workout.getId()))
+                .fetch()
+                .into(Integer.class));
+        return workout;
     }
 
     public List<Workout> getWorkouts() {
