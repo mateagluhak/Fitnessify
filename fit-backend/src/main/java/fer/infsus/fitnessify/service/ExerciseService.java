@@ -26,4 +26,8 @@ public class ExerciseService {
     public Exercise createExercise(ExerciseDto exerciseDto) {
         return exerciseRepository.createExercise(exerciseDto);
     }
+
+    public Exercise editExercise(Integer exerciseId, ExerciseDto exerciseDto) {
+        return exerciseRepository.editExercise(exerciseId, exerciseDto);
+    }
 }

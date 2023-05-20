@@ -39,8 +39,13 @@ public class WorkoutController {
     }
 
     @PutMapping("/workout/edit/{workout_id}")
-    public ResponseEntity<Void> editWorkout(Workout workout, @PathVariable("workout_id") Integer workoutId) {
-        return null;
+    public ResponseEntity<Workout> editWorkout(@PathVariable("workout_id") Integer workoutId, @RequestBody @Valid WorkoutDto updatedWorkout) {
+        Workout workout = workoutService.editWorkout(workoutId, updatedWorkout);
+        if (workout != null) {
+            return ResponseEntity.ok(workout);
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @DeleteMapping("/workout/{workout_id}")

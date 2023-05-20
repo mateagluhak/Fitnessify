@@ -35,4 +35,18 @@ public class ExerciseRepository {
             return null;
         }
     }
+
+    public Exercise editExercise(Integer exerciseId, ExerciseDto exerciseDto) {
+        try {
+            return dslContext.update(EXERCISE)
+                    .set(EXERCISE.NAME, exerciseDto.name())
+                    .set(EXERCISE.MAX_WEIGHT, BigDecimal.valueOf(exerciseDto.maxWeight()))
+                    .where(EXERCISE.ID.eq(exerciseId))
+                    .returning()
+                    .fetchSingleInto(Exercise.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
