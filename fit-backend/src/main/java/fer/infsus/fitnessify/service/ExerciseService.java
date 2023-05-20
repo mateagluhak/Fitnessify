@@ -1,5 +1,6 @@
 package fer.infsus.fitnessify.service;
 
+import fer.infsus.fitnessify.dto.ExerciseDto;
 import fer.infsus.fitnessify.model.Exercise;
 import fer.infsus.fitnessify.repository.ExerciseRepository;
 import lombok.NonNull;
@@ -20,5 +21,9 @@ public class ExerciseService {
 
     public List<Exercise> getExercises() {
         return exerciseRepository.getExercises();
+    }
+
+    public Exercise createExercise(ExerciseDto exerciseDto) {
+        return exerciseRepository.createExercise(exerciseDto);
     }
 }
