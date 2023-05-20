@@ -1,37 +1,41 @@
 package fer.infsus.fitnessify.controller;
 
 import fer.infsus.fitnessify.model.Exercise;
-import fer.infsus.fitnessify.model.Workout;
+import fer.infsus.fitnessify.service.ExerciseService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller("/exercise")
+@RestController
+@RequiredArgsConstructor
 public class ExerciseController {
+    @NonNull
+    private ExerciseService exerciseService;
 
-    @GetMapping("/{exercise_id}")
+    @GetMapping("/exercise/{exercise_id}")
     public ResponseEntity<Exercise> getExercise(@PathVariable("exercise_id") Integer exerciseId) {
-        return null;
+        return ResponseEntity.ok(exerciseService.getExercise(exerciseId));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/exercises")
     public ResponseEntity<List<Exercise>> getExercises() {
-        return null;
+        return ResponseEntity.ok(exerciseService.getExercises());
     }
 
-    @PostMapping("/create")
+    @PostMapping("/exercise/create")
     public ResponseEntity<Void> createExercise(Exercise newExercise) {
         return null;
     }
 
-    @PutMapping("/edit/{exercise_id}")
+    @PutMapping("/exercise/edit/{exercise_id}")
     public ResponseEntity<Void> editExercise(Exercise exercise, @PathVariable("exercise_id") Integer exerciseId) {
         return null;
     }
 
-    @DeleteMapping("/{exercise_id}")
+    @DeleteMapping("/exercise/{exercise_id}")
     public ResponseEntity<Void> deleteExercise(@PathVariable("exercise_id") Integer exerciseId) {
         return null;
     }

@@ -8,6 +8,7 @@ import org.jooq.DSLContext;
 import java.util.List;
 
 import static fer.infsus.fitnessify.Tables.WORKOUT;
+import static fer.infsus.fitnessify.Tables.WORKOUTEXERCISE;
 
 @RequiredArgsConstructor
 public class WorkoutRepository {
@@ -19,6 +20,14 @@ public class WorkoutRepository {
     }
 
     public List<Workout> getWorkouts() {
-        return dslContext.selectFrom(WORKOUT).fetch().into(Workout.class);
+        List<Workout> workouts = dslContext.selectFrom(WORKOUT).fetch().into(Workout.class);
+        for (Workout workout : workouts) {
+            workout.setExerciseIds(dslContext.select(WORKOUTEXERCISE.EXERCISE_ID)
+                    .from(WORKOUTEXERCISE)
+                    .where(WORKOUTEXERCISE.WORKOUT_ID.eq(workout.getId()))
+                    .fetch()
+                    .into(Integer.class));
+        }
+        return workouts;
     }
 }

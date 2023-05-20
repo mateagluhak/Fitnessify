@@ -1,36 +1,41 @@
 package fer.infsus.fitnessify.controller;
 
 import fer.infsus.fitnessify.model.Workout;
+import fer.infsus.fitnessify.service.WorkoutService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller("/workout")
+@RestController
+@RequiredArgsConstructor
 public class WorkoutController {
+    @NonNull
+    private WorkoutService workoutService;
 
-    @GetMapping("/{workout_id}")
+    @GetMapping("/workout/{workout_id}")
     public ResponseEntity<Workout> getWorkout(@PathVariable("workout_id") Integer workoutId) {
-        return null;
+        return ResponseEntity.ok(workoutService.getWorkout(workoutId));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/workouts")
     public ResponseEntity<List<Workout>> getWorkouts() {
-        return null;
+        return ResponseEntity.ok(workoutService.getWorkouts());
     }
 
-    @PostMapping("/create")
+    @PostMapping("/workout/create")
     public ResponseEntity<Void> createWorkout(Workout newWorkout) {
         return null;
     }
 
-    @PutMapping("/edit/{workout_id}")
+    @PutMapping("/workout/edit/{workout_id}")
     public ResponseEntity<Void> editWorkout(Workout workout, @PathVariable("workout_id") Integer workoutId) {
         return null;
     }
 
-    @DeleteMapping("/{workout_id}")
+    @DeleteMapping("/workout/{workout_id}")
     public ResponseEntity<Void> deleteWorkout(@PathVariable("workout_id") Integer workoutId) {
         return null;
     }
