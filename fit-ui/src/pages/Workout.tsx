@@ -1,12 +1,19 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Workout() {
+  const navigate = useNavigate();
+
   // Sample data for the table
   const workouts = [
     { id: 1, name: "Workout 1", exercises: "Exercise 1, Exercise 5, Exercise 6" },
     { id: 2, name: "Workout 2", exercises: "Exercise 2" },
     { id: 3, name: "Workout 3", exercises: "Exercise 3" },
   ];
+
+  const handleEdit = (id:number) => {
+    navigate(`/workout/${id}`);
+  };
 
   return (
     <div className="workout-container">
@@ -25,7 +32,7 @@ function Workout() {
               <td>{workout.name}</td>
               <td>{workout.exercises}</td>
               <td>
-                <button>Edit</button>
+                <button onClick={() => handleEdit(workout.id)}>Edit</button>
                 <button>Delete</button>
               </td>
             </tr>
