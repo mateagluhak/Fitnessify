@@ -1,5 +1,6 @@
 package fer.infsus.fitnessify.repository;
 
+import fer.infsus.fitnessify.dto.WorkoutDto;
 import fer.infsus.fitnessify.model.Workout;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,18 @@ public class WorkoutRepository {
                     .into(Integer.class));
         }
         return workouts;
+    }
+
+    public Workout createWorkout(WorkoutDto workoutDto) {
+        try {
+            return dslContext.insertInto(WORKOUT)
+                    .columns(WORKOUT.NAME, WORKOUT.WORKOUT_PLAN_ID)
+                    .values(workoutDto.name(), workoutDto.workoutPlanId())
+                    .returning()
+                    .fetchSingleInto(Workout.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

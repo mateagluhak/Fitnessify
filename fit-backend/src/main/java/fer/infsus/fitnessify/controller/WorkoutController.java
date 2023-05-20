@@ -1,12 +1,15 @@
 package fer.infsus.fitnessify.controller;
 
+import fer.infsus.fitnessify.dto.WorkoutDto;
 import fer.infsus.fitnessify.model.Workout;
 import fer.infsus.fitnessify.service.WorkoutService;
+import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -26,8 +29,13 @@ public class WorkoutController {
     }
 
     @PostMapping("/workout/create")
-    public ResponseEntity<Void> createWorkout(Workout newWorkout) {
-        return null;
+    public ResponseEntity<Workout> createWorkout(@RequestBody @Valid WorkoutDto newWorkout) {
+        Workout workout = workoutService.createWorkout(newWorkout);
+        if (workout != null) {
+            return ResponseEntity.created(URI.create("/workout/" + workout.getId())).body(workout);
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/workout/edit/{workout_id}")
