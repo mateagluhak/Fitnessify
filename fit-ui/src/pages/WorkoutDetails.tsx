@@ -10,13 +10,20 @@ interface Exercise {
   id: number;
   name: string;
   maxWeight: number;
+  muscleGroup: string;
+}
+
+interface WorkoutExerciseData {
+  exerciseId: number;
+  priorityId: number;
+  repetitions: number;
 }
 
 interface Workout {
   id: number;
   name: string;
   workoutPlanId: number;
-  exerciseIds: number[];
+  workoutExerciseData: WorkoutExerciseData[];
 }
 
 function WorkoutDetails() {
@@ -35,9 +42,12 @@ function WorkoutDetails() {
   const fetchExercises = () => {
     api.get<Exercise[]>('/exercises').then((response) => {
       const allExercises = response.data;
-      if (workout && workout.exerciseIds) {
+      if (workout && workout.workoutExerciseData) {
+        const exerciseIds = workout.workoutExerciseData.map(
+          (workoutExerciseData) => workoutExerciseData.exerciseId
+        );
         const workoutExercises = allExercises.filter((exercise) =>
-          workout.exerciseIds.includes(exercise.id)
+          exerciseIds.includes(exercise.id)
         );
         setExercises(workoutExercises);
       } else {
@@ -65,6 +75,7 @@ function WorkoutDetails() {
             <tr>
               <th>Exercise Name</th>
               <th>Max Weight</th>
+              <th>Muscle Group</th>
             </tr>
           </thead>
           <tbody>
@@ -72,6 +83,7 @@ function WorkoutDetails() {
               <tr key={exercise.id}>
                 <td>{exercise.name}</td>
                 <td>{exercise.maxWeight}</td>
+                <td>{exercise.muscleGroup}</td>
               </tr>
             ))}
           </tbody>

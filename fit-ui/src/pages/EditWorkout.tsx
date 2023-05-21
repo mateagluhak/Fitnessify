@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { FaEdit } from 'react-icons/fa';
 import axios from 'axios';
 
@@ -11,19 +11,26 @@ interface Exercise {
   id: number;
   name: string;
   maxWeight: number | null;
+  muscleGroup: string;
+}
+
+interface WorkoutExerciseData {
+  exerciseId: number;
+  priorityId: number;
+  repetitions: number;
 }
 
 interface Workout {
   id: number;
   name: string;
   workoutPlanId: number;
-  exerciseIds: number[];
+  workoutExerciseData: WorkoutExerciseData[];
 }
 
 function EditWorkout() {
   const { id } = useParams<{ id: string }>();
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [allExercises, setAllExercises] = useState<Exercise[]>([]); // Updated state for all exercises
+  const [allExercises, setAllExercises] = useState<Exercise[]>([]);
   const [workout, setWorkout] = useState<Workout>();
   const [workoutName, setWorkoutName] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -47,9 +54,12 @@ function EditWorkout() {
   const fetchExercises = () => {
     api.get<Exercise[]>('/exercises').then((response) => {
       const allExercises = response.data;
-      if (workout && workout.exerciseIds) {
+      if (workout && workout.workoutExerciseData) {
+        const exerciseIds = workout.workoutExerciseData.map(
+          (workoutExerciseData) => workoutExerciseData.exerciseId
+        );
         const workoutExercises = allExercises.filter((exercise) =>
-          workout.exerciseIds.includes(exercise.id)
+          exerciseIds.includes(exercise.id)
         );
         setExercises(workoutExercises);
       } else {
@@ -65,8 +75,20 @@ function EditWorkout() {
   const handleSubmitWorkoutName = (event: React.FormEvent) => {
     event.preventDefault();
     setIsEditing(false);
-    // Update workout name logic here
-  };
+    if (workout) {
+      const updatedWorkout = { ...workout, name: workoutName };
+      api
+        .put(`/workout/edit/${workout.id}`, updatedWorkout)
+        .then((response) => {
+          const updatedWorkoutData = response.data;
+          setWorkout(updatedWorkoutData);
+          setWorkoutName(updatedWorkoutData.name); // Update the workout name in the state
+        })
+        .catch((error) => {
+          console.error('Failed to update workout:', error);
+        });
+    }
+  };  
 
   const handleAddExercise = () => {
     setIsModalOpen(true);
@@ -81,63 +103,74 @@ function EditWorkout() {
     setSelectedExerciseId(selectedId);
   };
 
-// ...import statements and component definition...
-
-const handleExerciseSubmit = (event: React.FormEvent) => {
-  event.preventDefault();
+  const handleExerciseSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
   
-  if (selectedExerciseId && workout) {
-    const updatedWorkout = {
-      ...workout,
-      exerciseIds: [...workout.exerciseIds, selectedExerciseId]
-    };
+    if (selectedExerciseId && workout) {
+      const selectedExercise = allExercises.find(
+        (exercise) => exercise.id === selectedExerciseId
+      );
+  
+      if (selectedExercise) {
+        const updatedWorkout = {
+          ...workout,
+          workoutExerciseData: [
+            ...workout.workoutExerciseData,
+            {
+              exerciseId: selectedExerciseId,
+              priorityId: 1,
+              repetitions: 1
+            }
+          ]
+        };
+  
+        api
+          .put(`/workout/edit/${workout.id}`, updatedWorkout)
+          .then((response) => {
+            const updatedWorkout = response.data;
+            setWorkout(updatedWorkout);
+          })
+          .catch((error) => {
+            console.error('Failed to update workout:', error);
+          });
+      }
+    }
+  
+    setSelectedExerciseId(null);
+    setIsModalOpen(false);
+  };
+  
 
-    api.put(`/workout/edit/${workout.id}`, updatedWorkout)
-      .then((response) => {
-        // Handle the successful response
-        const updatedWorkout = response.data;
-        setWorkout(updatedWorkout);
-      })
-      .catch((error) => {
-        // Handle the error
-        console.error('Failed to update workout:', error);
-      });
-  }
+  const handleRemove = (exerciseId: number) => {
+    if (workout) {
+      const updatedWorkoutExerciseData = workout.workoutExerciseData.filter(
+        (exerciseData) => exerciseData.exerciseId !== exerciseId
+      );
 
-  setSelectedExerciseId(null);
-  setIsModalOpen(false);
-};
+      const updatedWorkout = {
+        ...workout,
+        workoutExerciseData: updatedWorkoutExerciseData
+      };
 
-const handleRemove = (exerciseId: number) => {
-  if (workout) {
-    const updatedExerciseIds = workout.exerciseIds.filter(id => id !== exerciseId);
-    const updatedWorkout = {
-      ...workout,
-      exerciseIds: updatedExerciseIds
-    };
+      api
+        .put(`/workout/edit/${workout.id}`, updatedWorkout)
+        .then((response) => {
+          const updatedWorkout = response.data;
+          setWorkout(updatedWorkout);
+        })
+        .catch((error) => {
+          console.error('Failed to update workout:', error);
+        });
+    }
+  };
 
-    api.put(`/workout/edit/${workout.id}`, updatedWorkout)
-      .then((response) => {
-        // Handle the successful response
-        const updatedWorkout = response.data;
-        setWorkout(updatedWorkout);
-      })
-      .catch((error) => {
-        // Handle the error
-        console.error('Failed to update workout:', error);
-      });
-  }
-};
-
-
-
-const handleRefresh = () => {
-  window.location.reload();
-};
+  const handleRefresh = () => {
+    window.location.reload();
+  };
 
   useEffect(() => {
     fetchWorkout();
-    fetchAllExercises(); // Fetch all exercises
+    fetchAllExercises();
   }, [id]);
 
   useEffect(() => {
@@ -160,7 +193,8 @@ const handleRefresh = () => {
           </form>
         ) : (
           <>
-            {workoutName} <FaEdit className="edit-icon" onClick={handleEditWorkoutName} />
+            {workoutName}{' '}
+            <FaEdit className="edit-icon" onClick={handleEditWorkoutName} />
           </>
         )}
       </h2>
@@ -170,6 +204,7 @@ const handleRefresh = () => {
             <tr>
               <th>Exercise Name</th>
               <th>Max Weight</th>
+              <th>Muscle Group</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -178,8 +213,11 @@ const handleRefresh = () => {
               <tr key={exercise.id}>
                 <td>{exercise.name}</td>
                 <td>{exercise.maxWeight}</td>
+                <td>{exercise.muscleGroup}</td>
                 <td>
-                <button onClick={() => handleRemove(exercise.id)}>Remove</button>
+                  <button onClick={() => handleRemove(exercise.id)}>
+                    Remove
+                  </button>
                 </td>
               </tr>
             ))}
@@ -194,7 +232,10 @@ const handleRefresh = () => {
           <div className="modal-content">
             <h3>Select an Exercise</h3>
             <form onSubmit={handleExerciseSubmit}>
-              <select value={selectedExerciseId || ''} onChange={handleExerciseSelect}>
+              <select
+                value={selectedExerciseId || ''}
+                onChange={handleExerciseSelect}
+              >
                 <option value="">Select an exercise</option>
                 {allExercises.map((exercise) => (
                   <option key={exercise.id} value={exercise.id}>

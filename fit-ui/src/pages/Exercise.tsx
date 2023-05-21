@@ -10,6 +10,7 @@ interface Exercise {
   id: number;
   name: string;
   maxWeight: number | null;
+  muscleGroup: string;
 }
 
 function Exercise() {
@@ -19,7 +20,8 @@ function Exercise() {
   const [newExercise, setNewExercise] = useState<Exercise>({
     id: 0,
     name: '',
-    maxWeight: null
+    maxWeight: null,
+    muscleGroup: ''
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -43,7 +45,8 @@ function Exercise() {
       setNewExercise({
         id: 0,
         name: '',
-        maxWeight: null
+        maxWeight: null,
+        muscleGroup: ''
       });
       setIsModalOpen(false);
       fetchAllExercises();
@@ -78,6 +81,7 @@ function Exercise() {
             <tr>
               <th>Exercise Name</th>
               <th>Max Weight</th>
+              <th>Muscle Group</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -86,6 +90,7 @@ function Exercise() {
               <tr key={exercise.id}>
                 <td>{exercise.name}</td>
                 <td>{exercise.maxWeight}</td>
+                <td>{exercise.muscleGroup}</td>
                 <td>
                   <button onClick={() => handleEdit(exercise.id)}>Edit</button>
                   <button onClick={() => {handleDelete(exercise.id); handleRefresh();}}>Delete</button>

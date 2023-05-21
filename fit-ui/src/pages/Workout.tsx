@@ -9,13 +9,20 @@ const api = axios.create({
 interface Exercise {
   id: number;
   name: string;
+  muscleGroup: string;
+}
+
+interface WorkoutExerciseData {
+  exerciseId: number;
+  priorityId: number;
+  repetitions: number;
 }
 
 interface Workout {
   id: number;
   name: string;
   workoutPlanId: number;
-  exerciseIds: number[];
+  workoutExerciseData: WorkoutExerciseData[];
 }
 
 function Workout() {
@@ -40,9 +47,9 @@ function Workout() {
     });
   };
 
-  const getExercisesByIds = (exerciseIds: number[]): string => {
-    const exerciseNames = exerciseIds.map((id) => {
-      const exercise = exercises.find((ex) => ex.id === id);
+  const getExercisesByIds = (workoutExerciseData: WorkoutExerciseData[]): string => {
+    const exerciseNames = workoutExerciseData.map((wed) => {
+      const exercise = exercises.find((ex) => ex.id === wed.exerciseId);
       return exercise ? exercise.name : '';
     });
     return exerciseNames.join(', ');
@@ -77,6 +84,7 @@ function Workout() {
           <tr>
             <th>Name</th>
             <th>Exercises</th>
+            <th>Workout Plan</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -84,7 +92,8 @@ function Workout() {
           {workouts.map((workout) => (
             <tr key={workout.id}>
               <td>{workout.name}</td>
-              <td>{getExercisesByIds(workout.exerciseIds)}</td>
+              <td>{getExercisesByIds(workout.workoutExerciseData)}</td>
+              <td>{getExercisesByIds(workout.workoutExerciseData)}</td>
               <td>
                 <button onClick={() => handleDetails(workout.id)}>Details</button>
                 <button onClick={() => handleEdit(workout.id)}>Edit</button>
