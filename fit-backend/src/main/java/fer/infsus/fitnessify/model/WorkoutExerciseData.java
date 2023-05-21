@@ -4,16 +4,13 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @Data
 @RequiredArgsConstructor
-public class Workout {
+public class WorkoutExerciseData {
     @NonNull
-    private Integer id;
+    private Integer exerciseId;
     @NonNull
-    private String name;
+    private Integer priorityId;
     @NonNull
-    private Integer workoutPlanId;
-    private List<WorkoutExerciseData> workoutExerciseData;
+    private Integer repetitions;
 }
