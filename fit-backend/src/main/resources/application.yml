@@ -4,3 +4,5 @@ spring:
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
+  flyway:
+    clean-disabled: false
