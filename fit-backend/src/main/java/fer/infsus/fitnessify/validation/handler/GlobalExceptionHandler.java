@@ -1,5 +1,9 @@
-package fer.infsus.fitnessify.validation.exception;
+package fer.infsus.fitnessify.validation.handler;
 
+import fer.infsus.fitnessify.validation.exception.InvalidExerciseException;
+import fer.infsus.fitnessify.validation.exception.InvalidMuscleGroupException;
+import fer.infsus.fitnessify.validation.exception.InvalidPriorityException;
+import fer.infsus.fitnessify.validation.exception.InvalidRepetitionsException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidExerciseException.class)
     public ResponseEntity<Map<String, List<String>>> handleInvalidExerciseError(InvalidExerciseException ex) {
+        return new ResponseEntity<>(getErrorsMap(List.of(ex.getErrorMessage())), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidMuscleGroupException.class)
+    public ResponseEntity<Map<String, List<String>>> handleInvalidMuscleGroupError(InvalidMuscleGroupException ex) {
+        return new ResponseEntity<>(getErrorsMap(List.of(ex.getErrorMessage())), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidPriorityException.class)
+    public ResponseEntity<Map<String, List<String>>> handleInvalidPriorityError(InvalidPriorityException ex) {
+        return new ResponseEntity<>(getErrorsMap(List.of(ex.getErrorMessage())), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidRepetitionsException.class)
+    public ResponseEntity<Map<String, List<String>>> handleInvalidRepetitionsError(InvalidRepetitionsException ex) {
         return new ResponseEntity<>(getErrorsMap(List.of(ex.getErrorMessage())), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
