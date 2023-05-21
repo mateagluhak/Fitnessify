@@ -81,4 +81,8 @@ public class WorkoutRepository {
             return null;
         }
     }
+
+    public boolean deleteWorkout(Integer workoutId) {
+        return dslContext.deleteFrom(WORKOUT).where(WORKOUT.ID.eq(workoutId)).execute() > 0;
+    }
 }

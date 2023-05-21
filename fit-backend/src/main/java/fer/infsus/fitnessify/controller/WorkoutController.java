@@ -50,6 +50,10 @@ public class WorkoutController {
 
     @DeleteMapping("/workout/{workout_id}")
     public ResponseEntity<Void> deleteWorkout(@PathVariable("workout_id") Integer workoutId) {
-        return null;
+        if (workoutService.deleteWorkout(workoutId)) {
+            return ResponseEntity.ok().body(null);
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 }
