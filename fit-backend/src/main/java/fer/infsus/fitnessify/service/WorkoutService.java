@@ -2,6 +2,7 @@ package fer.infsus.fitnessify.service;
 
 import fer.infsus.fitnessify.dto.WorkoutDto;
 import fer.infsus.fitnessify.model.Workout;
+import fer.infsus.fitnessify.model.WorkoutExerciseData;
 import fer.infsus.fitnessify.repository.WorkoutRepository;
 import fer.infsus.fitnessify.validation.Validator;
 import lombok.NonNull;
@@ -27,12 +28,12 @@ public class WorkoutService {
     }
 
     public Workout createWorkout(WorkoutDto workoutDto) {
-        validator.validateExerciseList(workoutDto.exerciseIds());
+        validator.validateExerciseList(workoutDto.workoutExerciseData().stream().map(WorkoutExerciseData::getExerciseId).toList());
         return workoutRepository.createWorkout(workoutDto);
     }
 
     public Workout editWorkout(Integer workoutId, WorkoutDto workoutDto) {
-        validator.validateExerciseList(workoutDto.exerciseIds());
+        validator.validateExerciseList(workoutDto.workoutExerciseData().stream().map(WorkoutExerciseData::getExerciseId).toList());
         return workoutRepository.editWorkout(workoutId, workoutDto);
     }
 

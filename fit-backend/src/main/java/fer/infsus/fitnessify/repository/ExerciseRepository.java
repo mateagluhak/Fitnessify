@@ -1,6 +1,7 @@
 package fer.infsus.fitnessify.repository;
 
 import fer.infsus.fitnessify.dto.ExerciseDto;
+import fer.infsus.fitnessify.enums.MuscleGroup;
 import fer.infsus.fitnessify.model.Exercise;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,8 @@ public class ExerciseRepository {
 
     public Exercise createExercise(ExerciseDto exerciseDto) {
         try {
-            return dslContext.insertInto(EXERCISE).columns(EXERCISE.NAME, EXERCISE.MAX_WEIGHT)
-                    .values(exerciseDto.name(), BigDecimal.valueOf(exerciseDto.maxWeight()))
+            return dslContext.insertInto(EXERCISE).columns(EXERCISE.NAME, EXERCISE.MUSCLE_GROUP, EXERCISE.MAX_WEIGHT)
+                    .values(exerciseDto.name(), MuscleGroup.valueOf(exerciseDto.muscleGroup()), BigDecimal.valueOf(exerciseDto.maxWeight()))
                     .returning()
                     .fetchSingleInto(Exercise.class);
         } catch (Exception e) {
@@ -40,6 +41,7 @@ public class ExerciseRepository {
         try {
             return dslContext.update(EXERCISE)
                     .set(EXERCISE.NAME, exerciseDto.name())
+                    .set(EXERCISE.MUSCLE_GROUP, MuscleGroup.valueOf(exerciseDto.muscleGroup()))
                     .set(EXERCISE.MAX_WEIGHT, BigDecimal.valueOf(exerciseDto.maxWeight()))
                     .where(EXERCISE.ID.eq(exerciseId))
                     .returning()

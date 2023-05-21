@@ -2,6 +2,7 @@ package fer.infsus.fitnessify.repository;
 
 import fer.infsus.fitnessify.dto.WorkoutDto;
 import fer.infsus.fitnessify.model.Workout;
+import fer.infsus.fitnessify.model.WorkoutExerciseData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -18,22 +19,22 @@ public class WorkoutRepository {
 
     public Workout getWorkoutById(Integer id) {
         Workout workout = dslContext.selectFrom(WORKOUT).where(WORKOUT.ID.eq(id)).fetchSingle().into(Workout.class);
-        workout.setExerciseIds(dslContext.select(WORKOUTEXERCISE.EXERCISE_ID)
+        workout.setWorkoutExerciseData(dslContext.select(WORKOUTEXERCISE.EXERCISE_ID, WORKOUTEXERCISE.PRIORITY_ID, WORKOUTEXERCISE.REPETITIONS)
                 .from(WORKOUTEXERCISE)
                 .where(WORKOUTEXERCISE.WORKOUT_ID.eq(workout.getId()))
                 .fetch()
-                .into(Integer.class));
+                .into(WorkoutExerciseData.class));
         return workout;
     }
 
     public List<Workout> getWorkouts() {
         List<Workout> workouts = dslContext.selectFrom(WORKOUT).fetch().into(Workout.class);
         for (Workout workout : workouts) {
-            workout.setExerciseIds(dslContext.select(WORKOUTEXERCISE.EXERCISE_ID)
+            workout.setWorkoutExerciseData(dslContext.select(WORKOUTEXERCISE.EXERCISE_ID, WORKOUTEXERCISE.PRIORITY_ID, WORKOUTEXERCISE.REPETITIONS)
                     .from(WORKOUTEXERCISE)
                     .where(WORKOUTEXERCISE.WORKOUT_ID.eq(workout.getId()))
                     .fetch()
-                    .into(Integer.class));
+                    .into(WorkoutExerciseData.class));
         }
         return workouts;
     }
@@ -45,13 +46,13 @@ public class WorkoutRepository {
                     .values(workoutDto.name(), workoutDto.workoutPlanId())
                     .returning()
                     .fetchSingleInto(Workout.class);
-            for (Integer exerciseId : workout.getExerciseIds()) {
+            for (WorkoutExerciseData data : workout.getWorkoutExerciseData()) {
                 dslContext.insertInto(WORKOUTEXERCISE)
-                        .columns(WORKOUTEXERCISE.WORKOUT_ID, WORKOUTEXERCISE.EXERCISE_ID)
-                        .values(workout.getId(), exerciseId)
+                        .columns(WORKOUTEXERCISE.WORKOUT_ID, WORKOUTEXERCISE.EXERCISE_ID, WORKOUTEXERCISE.PRIORITY_ID, WORKOUTEXERCISE.REPETITIONS)
+                        .values(workout.getId(), data.getExerciseId(), data.getPriorityId(), data.getRepetitions())
                         .execute();
             }
-            workout.setExerciseIds(workoutDto.exerciseIds());
+            workout.setWorkoutExerciseData(workoutDto.workoutExerciseData());
             return workout;
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,13 +69,13 @@ public class WorkoutRepository {
                     .returning()
                     .fetchSingleInto(Workout.class);
             dslContext.deleteFrom(WORKOUTEXERCISE).where(WORKOUTEXERCISE.WORKOUT_ID.eq(workoutId)).execute();
-            for (Integer exerciseId : workoutDto.exerciseIds()) {
+            for (WorkoutExerciseData data : workoutDto.workoutExerciseData()) {
                 dslContext.insertInto(WORKOUTEXERCISE)
-                        .columns(WORKOUTEXERCISE.WORKOUT_ID, WORKOUTEXERCISE.EXERCISE_ID)
-                        .values(workoutId, exerciseId)
+                        .columns(WORKOUTEXERCISE.WORKOUT_ID, WORKOUTEXERCISE.EXERCISE_ID, WORKOUTEXERCISE.PRIORITY_ID, WORKOUTEXERCISE.REPETITIONS)
+                        .values(workoutId, data.getExerciseId(), data.getPriorityId(), data.getRepetitions())
                         .execute();
             }
-            workout.setExerciseIds(workoutDto.exerciseIds());
+            workout.setWorkoutExerciseData(workoutDto.workoutExerciseData());
             return workout;
         } catch (Exception e) {
             e.printStackTrace();
