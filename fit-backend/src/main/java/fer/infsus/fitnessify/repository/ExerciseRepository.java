@@ -49,4 +49,8 @@ public class ExerciseRepository {
             return null;
         }
     }
+
+    public boolean deleteExercise(Integer exerciseId) {
+        return dslContext.deleteFrom(EXERCISE).where(EXERCISE.ID.eq(exerciseId)).execute() > 0;
+    }
 }

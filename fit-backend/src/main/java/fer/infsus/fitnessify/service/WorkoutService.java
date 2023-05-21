@@ -35,4 +35,8 @@ public class WorkoutService {
         validator.validateExerciseList(workoutDto.exerciseIds());
         return workoutRepository.editWorkout(workoutId, workoutDto);
     }
+
+    public boolean deleteWorkout(Integer workoutId) {
+        return workoutRepository.deleteWorkout(workoutId);
+    }
 }

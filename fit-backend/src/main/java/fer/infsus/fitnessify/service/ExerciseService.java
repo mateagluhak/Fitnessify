@@ -30,4 +30,8 @@ public class ExerciseService {
     public Exercise editExercise(Integer exerciseId, ExerciseDto exerciseDto) {
         return exerciseRepository.editExercise(exerciseId, exerciseDto);
     }
+
+    public boolean deleteExercise(Integer exerciseId) {
+        return exerciseRepository.deleteExercise(exerciseId);
+    }
 }
