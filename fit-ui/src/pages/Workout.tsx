@@ -25,14 +25,22 @@ interface Workout {
   workoutExerciseData: WorkoutExerciseData[];
 }
 
+interface WorkoutPlan {
+  id: number;
+  name: string;
+  profile_id: number;
+}
+
 function Workout() {
   const navigate = useNavigate();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);
 
   useEffect(() => {
     fetchAllWorkouts();
     fetchAllExercises();
+    fetchAllWorkoutPlans();
   }, []);
 
   const fetchAllWorkouts = () => {
@@ -47,12 +55,23 @@ function Workout() {
     });
   };
 
+  const fetchAllWorkoutPlans = () => {
+    api.get<WorkoutPlan[]>("/workout_plans").then((response) => {
+      setWorkoutPlans(response.data);
+    });
+  };
+
   const getExercisesByIds = (workoutExerciseData: WorkoutExerciseData[]): string => {
     const exerciseNames = workoutExerciseData.map((wed) => {
       const exercise = exercises.find((ex) => ex.id === wed.exerciseId);
       return exercise ? exercise.name : '';
     });
     return exerciseNames.join(', ');
+  };
+
+  const getWorkoutPlan = (workoutPlanId: number): string => {
+    const workoutPlan = workoutPlans.find((wp) => wp.id === workoutPlanId);
+    return workoutPlan ? workoutPlan.name : '';
   };
 
   const handleEdit = (id: number) => {
@@ -64,8 +83,8 @@ function Workout() {
   };
 
   const handleDelete = (id: number) => {
-    console.log("Zelim obrisat: ",id)
-    if (window.confirm("Are you sure you want to delete?")){
+    console.log("Zelim obrisat: ", id)
+    if (window.confirm("Are you sure you want to delete?")) {
       api.delete(`/workout/${id}`).then(() => {
         fetchAllWorkouts();
       })
@@ -93,11 +112,11 @@ function Workout() {
             <tr key={workout.id}>
               <td>{workout.name}</td>
               <td>{getExercisesByIds(workout.workoutExerciseData)}</td>
-              <td>{getExercisesByIds(workout.workoutExerciseData)}</td>
+              <td>{getWorkoutPlan(workout.workoutPlanId)}</td>
               <td>
                 <button onClick={() => handleDetails(workout.id)}>Details</button>
                 <button onClick={() => handleEdit(workout.id)}>Edit</button>
-                <button onClick={() => {handleDelete(workout.id);handleRefresh();}}>Delete</button>
+                <button onClick={() => { handleDelete(workout.id); handleRefresh(); }}>Delete</button>
               </td>
             </tr>
           ))}
