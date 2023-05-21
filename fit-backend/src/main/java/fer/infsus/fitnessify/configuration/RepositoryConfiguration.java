@@ -1,6 +1,8 @@
 package fer.infsus.fitnessify.configuration;
 
 import fer.infsus.fitnessify.repository.ExerciseRepository;
+import fer.infsus.fitnessify.repository.PriorityRepository;
+import fer.infsus.fitnessify.repository.WorkoutPlanRepository;
 import fer.infsus.fitnessify.repository.WorkoutRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +24,15 @@ public class RepositoryConfiguration {
     @Bean
     public ExerciseRepository getExerciseRepository() {
         return new ExerciseRepository(dslContext);
+    }
+
+    @Bean
+    public WorkoutPlanRepository getWorkoutPlanRepository() {
+        return new WorkoutPlanRepository(dslContext);
+    }
+
+    @Bean
+    public PriorityRepository getPriorityRepository() {
+        return new PriorityRepository(dslContext);
     }
 }
