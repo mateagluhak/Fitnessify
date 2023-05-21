@@ -56,6 +56,19 @@ function Workout() {
     navigate(`/workout/${id}/details`);
   };
 
+  const handleDelete = (id: number) => {
+    console.log("Zelim obrisat: ",id)
+    if (window.confirm("Are you sure you want to delete?")){
+      api.delete(`/workout/${id}`).then(() => {
+        fetchAllWorkouts();
+      })
+    }
+  };
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="workout-container">
       <h1>Workout</h1>
@@ -75,7 +88,7 @@ function Workout() {
               <td>
                 <button onClick={() => handleDetails(workout.id)}>Details</button>
                 <button onClick={() => handleEdit(workout.id)}>Edit</button>
-                <button>Delete</button>
+                <button onClick={() => {handleDelete(workout.id);handleRefresh();}}>Delete</button>
               </td>
             </tr>
           ))}
