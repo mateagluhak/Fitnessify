@@ -17,14 +17,22 @@ function Exercise() {
   const navigate = useNavigate();
   const [exercises, setExercises] = useState<Exercise[]>([]);
 
-  useEffect(() => {
-    api.get<Exercise[]>('/exercises').then((response) => {
+  const fetchAllExercises = () => {
+    api.get<Exercise[]>("/exercises").then((response) => {
       setExercises(response.data);
     });
-  }, []);
+  };
 
-  const handleDelete = (exerciseId: number) => {
-    // Implement delete logic here
+  const handleDelete = (id: number) => {
+    if (window.confirm("Are you sure you want to delete?")){
+      api.delete(`/exercise/${id}`).then(() => {
+        fetchAllExercises();
+      })
+    }
+  };
+
+  const handleRefresh = () => {
+    window.location.reload();
   };
 
   const handleEdit = (exerciseId: number) => {
@@ -43,6 +51,10 @@ function Exercise() {
   const handleCloseModal = () => {
     // Implement close modal logic here
   };
+
+  useEffect(() => {
+    fetchAllExercises();
+  }, []);
 
   return (
     <div>
@@ -63,7 +75,7 @@ function Exercise() {
                 <td>{exercise.maxWeight}</td>
                 <td>
                   <button onClick={() => handleEdit(exercise.id)}>Edit</button>
-                  <button onClick={() => handleDelete(exercise.id)}>Delete</button>
+                  <button onClick={() => {handleDelete(exercise.id); handleRefresh();}}>Delete</button>
                 </td>
               </tr>
             ))}
