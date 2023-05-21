@@ -25,8 +25,7 @@ function Exercise() {
 
   const handleDelete = (id: number) => {
     if (window.confirm("Are you sure you want to delete?")){
-      api.delete(`/workout/${id}`).then(() => {
-        console.log("Zelim obrisat: ",id)
+      api.delete(`/exercise/${id}`).then(() => {
         fetchAllExercises();
       })
     }
