@@ -18,7 +18,12 @@ public class ExerciseRepository {
     private DSLContext dslContext;
 
     public Exercise getExerciseById(Integer id) {
-        return dslContext.selectFrom(EXERCISE).where(EXERCISE.ID.eq(id)).fetchSingleInto(Exercise.class);
+        try {
+            return dslContext.selectFrom(EXERCISE).where(EXERCISE.ID.eq(id)).fetchSingleInto(Exercise.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public List<Exercise> getExercises() {
