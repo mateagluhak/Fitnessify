@@ -9,13 +9,19 @@ const api = axios.create({
 interface Exercise {
   id: number;
   name: string;
-  maxWeight: number;
+  maxWeight: number | null;
 }
 
 function Exercise() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [newExercise, setNewExercise] = useState<Exercise>({
+    id: 0,
+    name: '',
+    maxWeight: null
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchAllExercises = () => {
     api.get<Exercise[]>("/exercises").then((response) => {
@@ -31,6 +37,19 @@ function Exercise() {
     }
   };
 
+  const handleCreate = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    api.post<Exercise>(`/exercise/create`, newExercise).then(() => {
+      setNewExercise({
+        id: 0,
+        name: '',
+        maxWeight: null
+      });
+      setIsModalOpen(false);
+      fetchAllExercises();
+    });
+  };
+
   const handleRefresh = () => {
     window.location.reload();
   };
@@ -39,17 +58,8 @@ function Exercise() {
     // Implement edit logic here
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    // Implement form submission logic here
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Implement form input change logic here
-  };
-
   const handleCloseModal = () => {
-    // Implement close modal logic here
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -58,7 +68,10 @@ function Exercise() {
 
   return (
     <div>
-      <h1>Exercise</h1>
+      <div className='title-button-container'>
+        <h1>Exercise</h1>
+        <button className='create-button' onClick={() => setIsModalOpen(true)}>Create Exercise</button>
+      </div>
       <div className='table-container'>
         <table>
           <thead>
@@ -83,8 +96,37 @@ function Exercise() {
         </table>
       </div>
 
-      {/* Modal for editing exercise */}
-      {/* Rest of the code... */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Create Exercise</h3>
+            <form onSubmit={handleCreate}>
+              <label>
+                Exercise Name:
+                <input type="text" value={newExercise.name} onChange={(event) => setNewExercise({ ...newExercise, name: event.target.value })} />
+              </label>
+              <label>
+                Max Weight:
+                <input
+                      type="number"
+                      value={newExercise.maxWeight === null ? '' : String(newExercise.maxWeight)}
+                      onChange={(event) =>
+                        setNewExercise({
+                          ...newExercise,
+                          maxWeight: event.target.value === '' ? null : Number(event.target.value)
+                        })
+                      }
+                />
+
+              </label>
+              <div>
+                <button type="submit">Save</button>
+                <button onClick={handleCloseModal}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

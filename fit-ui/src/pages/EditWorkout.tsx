@@ -10,7 +10,7 @@ const api = axios.create({
 interface Exercise {
   id: number;
   name: string;
-  maxWeight: number;
+  maxWeight: number | null;
 }
 
 interface Workout {
