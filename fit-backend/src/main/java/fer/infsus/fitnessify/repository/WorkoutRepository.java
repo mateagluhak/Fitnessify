@@ -46,7 +46,7 @@ public class WorkoutRepository {
                     .values(workoutDto.name(), workoutDto.workoutPlanId())
                     .returning()
                     .fetchSingleInto(Workout.class);
-            for (WorkoutExerciseData data : workout.getWorkoutExerciseData()) {
+            for (WorkoutExerciseData data : workoutDto.workoutExerciseData()) {
                 dslContext.insertInto(WORKOUTEXERCISE)
                         .columns(WORKOUTEXERCISE.WORKOUT_ID, WORKOUTEXERCISE.EXERCISE_ID, WORKOUTEXERCISE.PRIORITY_ID, WORKOUTEXERCISE.REPETITIONS)
                         .values(workout.getId(), data.getExerciseId(), data.getPriorityId(), data.getRepetitions())
